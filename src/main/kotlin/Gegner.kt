@@ -1,7 +1,7 @@
 import java.util.*
 import kotlin.random.Random
-open class Gegner(val name: String) {
-    var health = 50
+open class Gegner(var name: String, open var health: Int) {
+
 
     fun takeDamage(damage: Int) {
         health -= damage
