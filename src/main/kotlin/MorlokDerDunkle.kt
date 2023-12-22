@@ -1,3 +1,4 @@
-class MorlokDerDunkle (name: String, health: Int) : Gegner(name, health) {
-    override var health: Int = 90
+
+class MorlokDerDunkle(name: String, health: Int) : Gegner(name, health) {
+    override var health: Int = 200
 }

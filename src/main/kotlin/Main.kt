@@ -19,8 +19,7 @@ val underline = "\u001B[4m"
 
 
 fun main() {
-    println()
-    println("${hintergrundBlau}${black}${bold}Reich der Legenden: Schicksalserwachen${reset}")
+
     val heroes = listOf(
         Held("Aric Windläufer"),
         Held("Elara Feuerschmiedin"),
@@ -29,59 +28,72 @@ fun main() {
         Held("Seraphina Sternensängerin"),
         Held("Kael Schattenjäger")
     )
+
     val selectedHeroes = mutableListOf<Held>()
-    val enemies = listOf(Gegner("Sylthara die Giftige", 100), Gegner("Gromm der Zerstörer", 90))
-    val endBoss = MorlokDerDunkle("Morlok der Dunkle", 140)
 
+    // Instanzen für die Bosse und Gegner
+    val sylthara = SyltharaDieGiftige("Sylthara die Giftige", 150)
+    val gromm = GrommDerZerstörer("Gromm der Zerstörer", 90)
+    val morlok = MorlokDerDunkle("Morlok der Dunkle", 200)
 
+    // Spielstartausgabe
     println()
+    println("${hintergrundBlau}${black}${bold}Reich der Legenden: Schicksalserwachen${reset}")
+
+    // Helden-Auswahl
     println("${cyan}${bold}Wähle 3 Helden aus:${reset}")
     for (i in 1..3) {
         println()
-        println("${cyan}${bold}Wähle Held $i:")
+        println("${cyan}${bold}Wähle Held $i:${reset}")
         println()
         heroes.forEachIndexed { index, hero -> println("$index. ${hero.name}") }
-        val heroIndex = readLine()?.toIntOrNull()
-        if (heroIndex != null && heroIndex in 0 until heroes.size) {
+
+        // Benutzereingabe für Heldenwahl
+        val heroIndex = readln().toIntOrNull()
+
+        // Überprüfung der Eingabe
+        if (heroIndex != null && heroIndex in heroes.indices) {
             selectedHeroes.add(heroes[heroIndex])
         } else {
             println("Ungültige Eingabe. Ein zufälliger Held wird ausgewählt.")
             selectedHeroes.add(heroes.random())
         }
     }
+
+    // Kampf gegen die Unterbosse
+    println("${cyan}${bold}Die Schlacht gegen die Unterbosse beginnt!${reset}")
     println()
-    println("${cyan}${bold}Die Schlacht beginnt!")
-    println()
-    for (gegner in enemies) {
-        while (gegner.health > 0 && selectedHeroes.any { it.health > 0 }) {
-            println("${cyan}${bold}${gegner.name} greift an!")
-            selectedHeroes.forEach { it.attack(gegner) }
-            if (gegner.health > 0) {
-                gegner.performRandomAttack(selectedHeroes.random())
+    for (enemy in listOf(sylthara, gromm)) {
+        // Kampfzyklus, bis der Unterboss besiegt ist oder die Helden besiegt sind
+        while (enemy.health > 0 && selectedHeroes.any { it.health > 0 }) {
+            println("${cyan}${bold}${enemy.name} greift an!")
+            selectedHeroes.forEach { it.attack(enemy) }
+            if (enemy.health > 0) {
+                enemy.performRandomAttack(selectedHeroes.random())
             }
         }
     }
 
+    // Kampf gegen den Endboss Morlok
+    println()
+    println("${cyan}${bold}Morlok der Dunkle erscheint!${reset}")
+    println()
+    // Kampfzyklus, bis Morlok besiegt ist oder die Helden besiegt sind
+    while (morlok.health > 0 && selectedHeroes.any { it.health > 0 }) {
+        println("${cyan}${bold}${morlok.name} greift an!")
+        selectedHeroes.forEach { it.attack(morlok) }
+        if (morlok.health > 0) {
+            morlok.performRandomAttack(selectedHeroes.random())
+        }
+    }
+
+    // Ausgabe des Spielendes basierend auf dem Zustand der Helden
     if (selectedHeroes.all { it.health > 0 }) {
         println()
-        println("${cyan}Morlok der Dunkle erscheint!${reset}")
-        println()
-        while (endBoss.health > 0 && selectedHeroes.any { it.health > 0 }) {
-            println("${cyan}${bold}${endBoss.name} greift an!")
-            selectedHeroes.forEach { it.attack(endBoss) }
-            if (endBoss.health > 0) {
-                endBoss.performRandomAttack(selectedHeroes.random())
-            }
-        }
-        if (selectedHeroes.all { it.health > 0 }) {
-            println()
-            println("${cyan}Die Helden haben Morlok den Dunkle besiegt und die Welt gerettet!${reset}")
-        } else {
-            println()
-            println("${red}Die Helden wurden besiegt. Das Abenteuer endet hier.${reset}")
-        }
+        println("${cyan}Die Helden haben Morlok den Dunklen besiegt und die Welt gerettet!${reset}")
     } else {
         println()
         println("${red}Die Helden wurden besiegt. Das Abenteuer endet hier.${reset}")
     }
 }
+
